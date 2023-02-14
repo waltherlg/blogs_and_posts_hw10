@@ -16,7 +16,7 @@ export const emailManager = {
     },
 
     async sendPasswordRecoveryMessage(passwordRecoveryData: any){
-        const passwordRecoveryCode = `<a href="https://some-front.com/recovery-password?code=${passwordRecoveryData.passwordRecoveryCode}">recovery password</a>`
-        await emailAdapter.sendEmail(passwordRecoveryData.email, "password recovery code", passwordRecoveryCode)
+        const passwordRecoveryCodeLink = `<a href="https://some-front.com/recovery-password?code=${passwordRecoveryData.passwordRecoveryCode}">recovery password</a>`
+        await emailAdapter.sendEmail(passwordRecoveryData.email, "password recovery code", passwordRecoveryCodeLink)
     }
 }

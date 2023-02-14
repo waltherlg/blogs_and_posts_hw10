@@ -101,8 +101,8 @@ authRouter.post('/logout',
 authRouter.post('/password-recovery',
     authRateLimiter.passwordRecovery,
     emailValidationForRecovery,
-    isEmailExistValidation,
     inputValidationMiddleware,
+    isEmailExistValidation,
     async (req: Request, res: Response) => {
     const result = await authService.passwordRecovery(req.body.email);
     if (result) {
