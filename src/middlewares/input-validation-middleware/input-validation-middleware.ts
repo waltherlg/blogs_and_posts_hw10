@@ -40,6 +40,12 @@ export const passwordValidation = body('password')
     .trim().bail().withMessage({"message": "password is not string", "field": "password" })
     .isLength({min: 6, max: 20}).bail().withMessage({"message": "wrong length password", "field": "password" })
 
+export const newPasswordValidation = body('newPassword')
+    .exists({checkFalsy: true, checkNull: true}).bail().withMessage({"message": "write your password", "field": "password" })
+    .notEmpty().bail().withMessage({"message": "password is empty", "field": "password"})
+    .trim().bail().withMessage({"message": "password is not string", "field": "password" })
+    .isLength({min: 6, max: 20}).bail().withMessage({"message": "wrong length password", "field": "password" })
+
 export const emailValidation = body('email')
     .exists({checkFalsy: true, checkNull: true}).bail().withMessage({"message": "write your email", "field": "email" })
     .notEmpty().bail().withMessage({"message": "email is empty", "field": "email"})
@@ -49,6 +55,12 @@ export const emailValidation = body('email')
         const isEmailExist = await usersService.isEmailExist(value)
         if (isEmailExist) throw new Error
     }).withMessage({"message": "email already exist", "field": "email" })
+
+export const emailValidationForRecovery = body('email')
+    .exists({checkFalsy: true, checkNull: true}).bail().withMessage({"message": "write your email", "field": "email" })
+    .notEmpty().bail().withMessage({"message": "email is empty", "field": "email"})
+    .trim().bail().withMessage({"message": "email is not string", "field": "email" })
+    .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).bail().withMessage({"message": "wrong symbols in email", "field": "email" })
 
 export const emailResendingValidation = body('email')
     .exists({checkFalsy: true, checkNull: true}).bail().withMessage({"message": "write your email", "field": "email" })
@@ -75,6 +87,14 @@ export const confirmationCodeValidation = body('code')
         const isCodeConfirmed = await usersService.isCodeConfirmed(value)
         if (isCodeConfirmed) throw new Error
     }).bail().withMessage({"message": "already Confirmed", "field": "code" })
+
+export const passwordRecoveryCodeValidation = body('recoveryCode')
+    .exists().bail().withMessage({message: "wright code", field: "recoveryCode" })
+    .trim().bail().withMessage({message: "code is not string", field: "recoveryCode" })
+    .custom(async value => {
+        const isCodeExist = await authService.isRecoveryCodeExist(value)
+        if (!isCodeExist) throw new Error
+    }).bail().withMessage({"message": "confirmation code not exist", "field": "recoveryCode" })
 
 // validation for blog
 export const nameValidation = body('name')

@@ -26,5 +26,18 @@ export const authRateLimiter = {
         max: 5,
         message: "Too many requests, please try again later",
         statusCode: 429
-    })
+    }),
+    passwordRecovery: rateLimit({
+        windowMs: 10 * 1 * 1000, // 10 sec
+        max: 5,
+        message: "Too many requests, please try again later",
+        statusCode: 429
+    }),
+    newPassword: rateLimit({
+        windowMs: 10 * 1 * 1000, // 10 sec
+        max: 5,
+        message: "Too many requests, please try again later",
+        statusCode: 429
+    }),
 }
+

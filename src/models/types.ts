@@ -48,7 +48,9 @@ export type userType = {
     createdAt: string
     confirmationCode: string
     expirationDate: any,
-    isConfirmed: boolean
+    isConfirmed: boolean,
+    passwordRecoveryCode: string,
+    expirationDateOfRecoveryCode: any
 }
 export type userTypeOutput = {
     id: string | ObjectId

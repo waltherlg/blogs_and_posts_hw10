@@ -14,4 +14,9 @@ export const emailManager = {
         const confirmationCode = '<a href="https://some-front.com/confirm-registration?code=' + refreshConfirmationData.confirmationCode + '">complete registration</a>'
         await emailAdapter.sendEmail(refreshConfirmationData.email, "resending confirmation code", confirmationCode)
     },
+
+    async sendPasswordRecoveryMessage(passwordRecoveryData: any){
+        const confirmationCode = `<a href="https://some-front.com/recovery-password?code=${passwordRecoveryData.confirmationCode}">recovery password</a>`
+        await emailAdapter.sendEmail(passwordRecoveryData.email, "password recovery code", confirmationCode)
+    }
 }

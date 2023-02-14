@@ -7,13 +7,13 @@ import {authMiddleware, refreshTokenCheck} from "../middlewares/basic-auth.middl
 import {
     confirmationCodeValidation,
     emailResendingValidation,
-    emailValidation,
+    emailValidation, emailValidationForRecovery,
     inputValidationMiddleware,
-    loginValidation, passwordValidation
+    loginValidation, newPasswordValidation, passwordRecoveryCodeValidation, passwordValidation
 } from "../middlewares/input-validation-middleware/input-validation-middleware";
 import {authService} from "../domain/auth-service";
-import rateLimit from "express-rate-limit";
 import {authRateLimiter} from "../middlewares/auth-rate-limiter";
+import {isEmailExistValidation} from "../middlewares/other-midlevares";
 
 
 export const authRouter = Router({})
@@ -78,14 +78,6 @@ authRouter.post('/refresh-token',
         res.status(200).cookie("refreshToken", newRefreshedToken, {httpOnly: true, secure: true}).send({accessToken})
     })
 
-// authRouter.post('/refresh-token',
-//     refreshTokenCheck,
-//     async (req: Request, res: Response) => {
-//         const newRefreshToken = await jwtService.updateJWTRefresh(req.user!._id, req.cookies!.refreshToken)
-//         const accessToken = await jwtService.createJWT(req.user!)
-//         res.status(200).cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true}).send({accessToken})
-//     })
-
 authRouter.get('/me',
     authMiddleware,
     async (req: Request, res: Response) => {
@@ -104,5 +96,31 @@ authRouter.post('/logout',
         const isLogout = await authService.logout(req.user!._id, req.cookies!.refreshToken)
         if (isLogout) res.cookie("refreshToken", "", {httpOnly: true, secure: true}).sendStatus(204)
         else res.status(404).send("no logout")
+    })
+
+authRouter.post('/password-recovery',
+    authRateLimiter.passwordRecovery,
+    emailValidationForRecovery,
+    isEmailExistValidation,
+    inputValidationMiddleware,
+    async (req: Request, res: Response) => {
+    const result = await authService.passwordRecovery(req.body.email);
+    if (result) {
+        res.sendStatus(204)
+    }
+    else res.sendStatus(404)
+})
+
+authRouter.post('/new-password',
+    authRateLimiter.newPassword,
+    newPasswordValidation,
+    passwordRecoveryCodeValidation,
+    inputValidationMiddleware,
+    async (req: Request, res: Response) => {
+        const result = await authService.newPasswordSet(req.body.newPassword, req.body.recoveryCode);
+        if (result) {
+            res.sendStatus(204)
+        }
+        else res.sendStatus(400)
     })
 

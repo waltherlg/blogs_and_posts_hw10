@@ -52,6 +52,13 @@ export const usersRepository = {
         }
         return user
     },
+    async getUserByPasswordRecoveryCode(code: string){
+        const user = await usersCollection.findOne({passwordRecoveryCode: code})
+        if (!user){
+            return null
+        }
+        return user
+    },
 
     async findUserByLoginOrEmail(loginOrEmail: string): Promise<userType | null>{
         const user = await usersCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
@@ -65,6 +72,26 @@ export const usersRepository = {
 
     async refreshConfirmationCode(refreshConfirmationData: any){
         let result = await usersCollection.updateOne({email: refreshConfirmationData.email}, {$set: {confirmationCode: refreshConfirmationData.confirmationCode, expirationDate: refreshConfirmationData.expirationDate}})
+        return result.modifiedCount === 1
+    },
+
+    async addPasswordRecoveryData(passwordRecoveryData: any){
+        let result = await usersCollection.updateOne({email: passwordRecoveryData.email},
+            {$set:
+                    {passwordRecoveryCode: passwordRecoveryData.passwordRecoveryCode,
+                    expirationDateOfRecoveryCode: passwordRecoveryData.expirationDateOfRecoveryCode}})
+        return result.modifiedCount === 1
+    },
+
+    async newPasswordSet(_id: ObjectId, passwordSalt: string, passwordHash: string){
+        let result = await usersCollection.updateOne(
+            {_id: _id},
+            {$set:
+                    {passwordHash: passwordHash,
+                    passwordSalt: passwordSalt,
+                    passwordRecoveryCode: "",
+                    expirationDateOfRecoveryCode: null
+                    }})
         return result.modifiedCount === 1
     }
 

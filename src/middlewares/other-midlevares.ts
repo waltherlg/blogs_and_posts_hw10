@@ -34,3 +34,12 @@ export const isUserOwnerOfDevice = async (req: Request, res: Response, next: Nex
     }
     next()
 }
+
+export const isEmailExistValidation = async (req: Request, res: Response, next: NextFunction) => {
+    const isEmailExist = await usersService.isEmailExist(req.body.email)
+    if (!isEmailExist) {
+        res.sendStatus(204)
+        return
+    }
+    next()
+}
