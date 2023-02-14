@@ -67,7 +67,7 @@ export const authService = {
             await emailManager.resendEmailConfirmationMessage(refreshConfirmationData)
         }
         catch (e) {
-            return null
+            return false
         }
         let result = await usersRepository.refreshConfirmationCode(refreshConfirmationData)
         return result
@@ -86,7 +86,7 @@ export const authService = {
             await emailManager.sendPasswordRecoveryMessage(passwordRecoveryData)
         }
         catch (e) {
-            return false
+            return null
         }
         let result = await usersRepository.addPasswordRecoveryData(passwordRecoveryData)
         return result

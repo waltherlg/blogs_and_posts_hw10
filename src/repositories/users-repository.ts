@@ -3,6 +3,7 @@ import {ObjectId} from "mongodb";
 import {userType} from "../models/types";
 import {userTypeOutput} from "../models/types";
 import {usersService} from "../domain/users-service";
+import {passwordRecoveryModel} from "../models/users-models";
 
 export const usersCollection = client.db("blogsAndPosts").collection<userType>("users")
 
@@ -75,7 +76,7 @@ export const usersRepository = {
         return result.modifiedCount === 1
     },
 
-    async addPasswordRecoveryData(passwordRecoveryData: any){
+    async addPasswordRecoveryData(passwordRecoveryData: passwordRecoveryModel){
         let result = await usersCollection.updateOne({email: passwordRecoveryData.email},
             {$set:
                     {passwordRecoveryCode: passwordRecoveryData.passwordRecoveryCode,
